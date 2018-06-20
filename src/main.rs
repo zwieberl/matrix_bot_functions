@@ -39,7 +39,7 @@ fn general_help_str() -> String {
 fn main() {
     // ================== Loading credentials ==================
     let mut settings = config::Config::default();
-    settings.merge(config::File::with_name("Settings")).unwrap();
+    settings.merge(config::File::with_name("botconfig")).unwrap();
 
     let user = settings.get_str("user").unwrap();
     let password  = settings.get_str("password").unwrap();
