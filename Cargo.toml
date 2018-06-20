@@ -1,0 +1,9 @@
+[package]
+name = "matrix_bot"
+version = "0.1.0"
+authors = ["zwieberl <donko@posteo.de>"]
+
+[dependencies]
+matrix_bot_api = "*"
+config = "0.8"
+rand = "0.3"
