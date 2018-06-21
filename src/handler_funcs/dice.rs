@@ -7,7 +7,7 @@ pub fn help_str_short() -> String {
    "!rolle X [X ..] - Rolle einen (oder mehrere) Würfel mit X Augen\n".to_string()
 }
 
-fn dice_help_str() -> String {
+pub fn help_str() -> String {
     let mut message = "Würfle Würfel:\n".to_string();
     message += "!rolle X [X ..]\n";
     message += "mit\n";
@@ -17,8 +17,8 @@ fn dice_help_str() -> String {
     message
 }
 
-pub fn dice_help (bot: &MatrixBot, room: &str, _cmd: &str) -> HandleResult {
-    bot.send_message(&dice_help_str(), room, MessageType::RoomNotice);
+fn dice_help (bot: &MatrixBot, room: &str, _cmd: &str) -> HandleResult {
+    bot.send_message(&help_str(), room, MessageType::RoomNotice);
     ContinueHandling
 }
 

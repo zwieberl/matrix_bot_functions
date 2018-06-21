@@ -16,7 +16,7 @@ fn general_help_func (bot: &MatrixBot, room: &str, cmd: &str) -> HandleResult {
       1 => {
                 // return HandleResult::ContinueHandling;
                 match cmd_split[0] {
-                   "rolle" => { dice::dice_help(bot, room, cmd); },
+                   "rolle" => { bot.send_message(&dice::help_str(), room, MessageType::RoomNotice) },
                    "stash" => { bot.send_message(&stash::help_str(), room, MessageType::RoomNotice) },
                    _ => bot.send_message("Tut mir leid, diesen Befehl gibt es nicht.", room, MessageType::RoomNotice),
                 }

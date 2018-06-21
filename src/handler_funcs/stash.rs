@@ -19,7 +19,6 @@ pub fn help_str() -> String {
 }
 
 
-
 // Our handler wants a mutable state (here represented by a little counter-variable)
 // This counter can be increased or decreased by users giving the bot a command.
 pub struct StashHandler {
