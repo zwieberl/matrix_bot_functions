@@ -5,7 +5,7 @@ extern crate matrix_bot_api;
 use matrix_bot_api::{MatrixBot, MessageType};
 use matrix_bot_api::handlers::{StatelessHandler, HandleResult};
 pub mod handler_funcs;
-use handler_funcs::{dice, leave};
+use handler_funcs::{dice, leave, stash};
 
 fn general_help_func (bot: &MatrixBot, room: &str, cmd: &str) -> HandleResult {
     let cmd_split : Vec<&str> = cmd.split_whitespace().collect();
@@ -17,6 +17,7 @@ fn general_help_func (bot: &MatrixBot, room: &str, cmd: &str) -> HandleResult {
                 // return HandleResult::ContinueHandling;
                 match cmd_split[0] {
                    "rolle" => { dice::dice_help(bot, room, cmd); },
+                   "stash" => { bot.send_message(&stash::help_str(), room, MessageType::RoomNotice) },
                    _ => bot.send_message("Tut mir leid, diesen Befehl gibt es nicht.", room, MessageType::RoomNotice),
                 }
            },
@@ -32,6 +33,7 @@ fn general_help_str() -> String {
     message += "!hilfe          - Schreibe diese Hilfe\n";
     message += "!hilfe BEFEHL   - Gib zusätzliche Hilfe über einen der unten stehenden Befehle\n";
     message += &dice::help_str_short();
+    message += &stash::help_str_short();
     message
 }
 
@@ -63,6 +65,7 @@ fn main() {
     // Registering all other handlers
     dice::register_handler(&mut bot, &prefix);
     leave::register_handler(&mut bot, &prefix);
+    stash::register_handler(&mut bot, &prefix);
 
     bot.run(&user, &password, &homeserver_url);
 }
