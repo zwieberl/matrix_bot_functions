@@ -5,7 +5,7 @@ extern crate matrix_bot_api;
 use matrix_bot_api::{MatrixBot, MessageType};
 use matrix_bot_api::handlers::{StatelessHandler, HandleResult};
 pub mod handler_funcs;
-use handler_funcs::{dice, leave, stash};
+use handler_funcs::{dice, leave, stash, weather};
 
 fn general_help_func (bot: &MatrixBot, room: &str, cmd: &str) -> HandleResult {
     let cmd_split : Vec<&str> = cmd.split_whitespace().collect();
@@ -18,6 +18,7 @@ fn general_help_func (bot: &MatrixBot, room: &str, cmd: &str) -> HandleResult {
                 match cmd_split[0] {
                    "rolle" => { bot.send_message(&dice::help_str(), room, MessageType::RoomNotice) },
                    "stash" => { bot.send_message(&stash::help_str(), room, MessageType::RoomNotice) },
+                   "wetter" => { bot.send_message(&weather::help_str(), room, MessageType::RoomNotice) },
                    _ => bot.send_message("Tut mir leid, diesen Befehl gibt es nicht.", room, MessageType::RoomNotice),
                 }
            },
@@ -34,6 +35,7 @@ fn general_help_str() -> String {
     message += "!hilfe BEFEHL   - Gib zusätzliche Hilfe über einen der unten stehenden Befehle\n";
     message += &dice::help_str_short();
     message += &stash::help_str_short();
+    message += &weather::help_str_short();
     message
 }
 
@@ -46,6 +48,7 @@ fn main() {
     let user = settings.get_str("user").unwrap();
     let password  = settings.get_str("password").unwrap();
     let homeserver_url = settings.get_str("homeserver_url").unwrap();
+    let openweatherapi = settings.get_str("openweatherapi").unwrap();
     // =========================================================
 
     // Defining Prefix
@@ -66,6 +69,7 @@ fn main() {
     dice::register_handler(&mut bot, &prefix);
     leave::register_handler(&mut bot, &prefix);
     stash::register_handler(&mut bot, &prefix);
+    weather::register_handler(&mut bot, &prefix, openweatherapi);
 
     bot.run(&user, &password, &homeserver_url);
 }

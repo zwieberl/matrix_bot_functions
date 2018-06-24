@@ -1,0 +1,9 @@
+[package]
+name = "openweathermap_api"
+version = "0.1.0"
+authors = ["zwieberl <donko@posteo.de>"]
+
+[dependencies]
+serde_derive = "*"
+serde = "*"
+serde_json = "1.0"
