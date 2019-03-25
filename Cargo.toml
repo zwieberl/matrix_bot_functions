@@ -2,15 +2,18 @@
 name = "matrix_bot_functions"
 version = "0.1.0"
 authors = ["zwieberl <donko@posteo.de>"]
-
+description = """Some functions for writing a bot for the Matrix messaging protocol"""
+license = "MIT"
+keywords = [ "matrix", "bot", "fractal" ]
+repository = "https://github.com/zwieberl/matrix_bot_functions"
 
 [dependencies]
-matrix_bot_api = { path = "../matrix_bot_api", version = "*"}
-config = "*" # For src/bin only. cargo doesn't cleanly support dependencies for only parts
+matrix_bot_api = { path = "../matrix_bot_api", version = "0.4"}
+config = "0.9.2" # For src/bin only. cargo doesn't cleanly support dependencies for only parts
 # dice handler
-rand = "*"
+rand = "0.6.5"
 # Weather handler
 openweathermap_api = {path = "./openweathermap_api"}
-serde_json = "*"
-reqwest = "*"
-chrono = "*"
+serde_json = "1.0.38"
+reqwest = "0.9.10"
+chrono = "0.4.6"
