@@ -1,4 +1,5 @@
 extern crate rand;
+
 use matrix_bot_api::{MatrixBot, MessageType};
 use matrix_bot_api::handlers::{HandleResult, StatelessHandler};
 use matrix_bot_api::handlers::HandleResult::{ContinueHandling, StopHandling};

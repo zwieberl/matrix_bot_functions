@@ -1,18 +1,16 @@
 [package]
-name = "matrix_bot"
+name = "matrix_bot_functions"
 version = "0.1.0"
 authors = ["zwieberl <donko@posteo.de>"]
 
 
 [dependencies]
-matrix_bot_api = "*"
-config = "0.8"
+matrix_bot_api = { path = "../matrix_bot_api", version = "*"}
+config = "*" # For src/bin only. cargo doesn't cleanly support dependencies for only parts
 # dice handler
-rand = "0.3"
+rand = "*"
 # Weather handler
-serde_json = "1.0"
+openweathermap_api = {path = "./openweathermap_api"}
+serde_json = "*"
 reqwest = "*"
 chrono = "*"
-
-[dependencies.openweathermap_api]
-path = "./openweathermap_api"

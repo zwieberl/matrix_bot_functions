@@ -1,11 +1,11 @@
 
 extern crate config;
 extern crate matrix_bot_api;
+extern crate matrix_bot_functions;
 
 use matrix_bot_api::{MatrixBot, MessageType};
 use matrix_bot_api::handlers::{StatelessHandler, HandleResult};
-pub mod handler_funcs;
-use handler_funcs::{dice, leave, stash, weather};
+use matrix_bot_functions::{dice, leave, stash, weather};
 
 fn general_help_func (bot: &MatrixBot, room: &str, cmd: &str) -> HandleResult {
     let cmd_split : Vec<&str> = cmd.split_whitespace().collect();
@@ -51,7 +51,7 @@ fn main() {
     let openweatherapi = settings.get_str("openweatherapi").unwrap();
     // =========================================================
 
-    // Defining Prefix
+    // Defining Prefix - default: "!"
     let prefix = None; // No special prefix at the moment. Replace by Some("myprefix")
 
     // Defining the first handler for general help
