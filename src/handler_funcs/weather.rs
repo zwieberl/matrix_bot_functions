@@ -7,7 +7,7 @@ use self::openweathermap_api::{OWMResponse};
 use std::collections::HashMap;
 
 use matrix_bot_api::{MatrixBot, MessageType};
-use matrix_bot_api::handlers::{MessageHandler, extract_command, HandleResult};
+use matrix_bot_api::handlers::{Message, MessageHandler, extract_command, HandleResult};
 use self::chrono::{DateTime, NaiveDateTime, Utc, Local};
 
 
@@ -95,10 +95,10 @@ impl WeatherHandler {
 // This trait only has one function: handle_message() and will be called on each
 // new (text-)message in the room the bot is in.
 impl MessageHandler for WeatherHandler {
-    fn handle_message(&mut self, bot: &MatrixBot, room: &str, message: &str) -> HandleResult {
+    fn handle_message(&mut self, bot: &MatrixBot, message: &Message) -> HandleResult {
         // extract_command() will split the message by whitespace and remove the prefix (here "!")
         // from the first entry. If the message does not start with the given prefix, None is returned.
-        let command = match extract_command(message, &self.cmd_prefix) {
+        let command = match extract_command(&message.body, &self.cmd_prefix) {
             Some(x) => x,
             None => return HandleResult::ContinueHandling,
         };
@@ -110,11 +110,11 @@ impl MessageHandler for WeatherHandler {
         // and a specific function for it (like StatelessHandler does it),
         // or you can use a simple match-statement, to act on the given command:
         let answer = match command {
-          "wetter" | "Wetter" => self.weather(&message[end_of_prefix..].trim()),
+          "wetter" | "Wetter" => self.weather(&message.body[end_of_prefix..].trim()),
           _ => { return HandleResult::ContinueHandling; } /* Not a known command */
         };
 
-        bot.send_message(&answer, room, MessageType::TextMessage);
+        bot.send_message(&answer, &message.room, MessageType::TextMessage);
         HandleResult::StopHandling
     }
 }

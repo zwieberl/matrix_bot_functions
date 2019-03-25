@@ -1,6 +1,6 @@
 extern crate rand;
 
-use matrix_bot_api::{MatrixBot, MessageType};
+use matrix_bot_api::{Message, MatrixBot, MessageType};
 use matrix_bot_api::handlers::{HandleResult, StatelessHandler};
 use matrix_bot_api::handlers::HandleResult::{ContinueHandling, StopHandling};
 
@@ -18,34 +18,34 @@ pub fn help_str() -> String {
     message
 }
 
-fn dice_help (bot: &MatrixBot, room: &str, _cmd: &str) -> HandleResult {
-    bot.send_message(&help_str(), room, MessageType::RoomNotice);
+fn dice_help (bot: &MatrixBot, message: &Message, _cmd: &str) -> HandleResult {
+    bot.send_message(&help_str(), &message.room, MessageType::RoomNotice);
     ContinueHandling
 }
 
-pub fn dice_func (bot: &MatrixBot, room: &str, cmd: &str) -> HandleResult {
+pub fn dice_func (bot: &MatrixBot, message: &Message, cmd: &str) -> HandleResult {
     let cmd_split = cmd.split_whitespace();
 
     let mut results: Vec<u32> = vec![];
     for dice in cmd_split {
         let sides = match dice.parse::<u32>() {
             Ok(x) => x,
-            Err(_) => { bot.send_message(&format!("{} ist leider keine Zahl.", dice), room, MessageType::RoomNotice); return StopHandling; }
+            Err(_) => { bot.send_message(&format!("{} ist leider keine Zahl.", dice), &message.room, MessageType::RoomNotice); return StopHandling; }
         };
         results.push((rand::random::<u32>() % sides) + 1);
     }
 
     if results.len() == 0 {
-        dice_help(bot, room, cmd);
+        dice_help(bot, &message, cmd);
         return StopHandling;
     }
 
     if results.len() == 1 {
-        bot.send_message(&format!("{}", results[0]), room, MessageType::RoomNotice);
+        bot.send_message(&format!("{}", results[0]), &message.room, MessageType::RoomNotice);
     } else {
        // make string from results:
        let str_res : Vec<String> = results.iter().map(|x| x.to_string()).collect();
-       bot.send_message(&format!("{} = {}", str_res.join(" + "), results.iter().sum::<u32>()), room, MessageType::RoomNotice);
+       bot.send_message(&format!("{} = {}", str_res.join(" + "), results.iter().sum::<u32>()), &message.room, MessageType::RoomNotice);
     }
     StopHandling
 }

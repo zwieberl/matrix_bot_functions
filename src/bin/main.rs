@@ -3,27 +3,27 @@ extern crate config;
 extern crate matrix_bot_api;
 extern crate matrix_bot_functions;
 
-use matrix_bot_api::{MatrixBot, MessageType};
+use matrix_bot_api::{MatrixBot, MessageType, Message};
 use matrix_bot_api::handlers::{StatelessHandler, HandleResult};
 use matrix_bot_functions::{dice, leave, stash, weather};
 
-fn general_help_func (bot: &MatrixBot, room: &str, cmd: &str) -> HandleResult {
+fn general_help_func (bot: &MatrixBot, message: &Message, cmd: &str) -> HandleResult {
     let cmd_split : Vec<&str> = cmd.split_whitespace().collect();
     match cmd_split.len() {
       0 => {
-                bot.send_message(&general_help_str(), room, MessageType::RoomNotice);
+                bot.send_message(&general_help_str(), &message.room, MessageType::RoomNotice);
            },
       1 => {
                 // return HandleResult::ContinueHandling;
                 match cmd_split[0] {
-                   "rolle" => { bot.send_message(&dice::help_str(), room, MessageType::RoomNotice) },
-                   "stash" => { bot.send_message(&stash::help_str(), room, MessageType::RoomNotice) },
-                   "wetter" => { bot.send_message(&weather::help_str(), room, MessageType::RoomNotice) },
-                   _ => bot.send_message("Tut mir leid, diesen Befehl gibt es nicht.", room, MessageType::RoomNotice),
+                   "rolle" => { bot.send_message(&dice::help_str(), &message.room, MessageType::RoomNotice) },
+                   "stash" => { bot.send_message(&stash::help_str(), &message.room, MessageType::RoomNotice) },
+                   "wetter" => { bot.send_message(&weather::help_str(), &message.room, MessageType::RoomNotice) },
+                   _ => bot.send_message("Tut mir leid, diesen Befehl gibt es nicht.", &message.room, MessageType::RoomNotice),
                 }
            },
       _ => {
-               bot.send_message("Tut mir leid, das geht nicht. Nutze \"!hilfe\" oder \"!hilfe BEFEHL\" für mehr Informationen.", room, MessageType::RoomNotice);
+               bot.send_message("Tut mir leid, das geht nicht. Nutze \"!hilfe\" oder \"!hilfe BEFEHL\" für mehr Informationen.", &message.room, MessageType::RoomNotice);
            }
     };
     HandleResult::StopHandling

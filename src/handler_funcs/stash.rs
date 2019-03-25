@@ -1,5 +1,5 @@
 use matrix_bot_api::{MatrixBot, MessageType};
-use matrix_bot_api::handlers::{MessageHandler, extract_command, HandleResult};
+use matrix_bot_api::handlers::{Message, MessageHandler, extract_command, HandleResult};
 
 pub fn help_str_short() -> String {
    "!{stash|del|show} [X ..] - Speichere einen (oder mehrere) Nachrichten speichern/anzeigen\n".to_string()
@@ -103,10 +103,10 @@ impl StashHandler {
 // This trait only has one function: handle_message() and will be called on each
 // new (text-)message in the room the bot is in.
 impl MessageHandler for StashHandler {
-    fn handle_message(&mut self, bot: &MatrixBot, room: &str, message: &str) -> HandleResult {
+    fn handle_message(&mut self, bot: &MatrixBot, message: &Message) -> HandleResult {
         // extract_command() will split the message by whitespace and remove the prefix (here "!")
         // from the first entry. If the message does not start with the given prefix, None is returned.
-        let command = match extract_command(message, &self.cmd_prefix) {
+        let command = match extract_command(&message.body, &self.cmd_prefix) {
             Some(x) => x,
             None => return HandleResult::ContinueHandling,
         };
@@ -119,13 +119,13 @@ impl MessageHandler for StashHandler {
         // or you can use a simple match-statement, to act on the given command:
         let answer = match command {
           "list"  => self.list(),
-          "stash" => self.stash(&message[end_of_prefix..].trim()),
-          "show"  => self.show(&message[end_of_prefix..].trim()),
-          "del"   => self.del(&message[end_of_prefix..].trim()),
+          "stash" => self.stash(&message.body[end_of_prefix..].trim()),
+          "show"  => self.show(&message.body[end_of_prefix..].trim()),
+          "del"   => self.del(&message.body[end_of_prefix..].trim()),
           _ => { return HandleResult::ContinueHandling; } /* Not a known command */
         };
 
-        bot.send_message(&answer, room, MessageType::RoomNotice);
+        bot.send_message(&answer, &message.room, MessageType::RoomNotice);
         HandleResult::StopHandling
     }
 }
