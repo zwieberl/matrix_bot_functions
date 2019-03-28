@@ -1,4 +1,4 @@
-extern crate rand;
+use rand;
 
 use matrix_bot_api::{Message, MatrixBot, MessageType};
 use matrix_bot_api::handlers::{HandleResult, StatelessHandler};

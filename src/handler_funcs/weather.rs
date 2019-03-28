@@ -1,15 +1,11 @@
-extern crate reqwest;
-extern crate serde_json;
-extern crate openweathermap_api;
-extern crate chrono;
+use reqwest;
 
-use self::openweathermap_api::{OWMResponse};
+use openweathermap_api::{OWMResponse};
 use std::collections::HashMap;
 
 use matrix_bot_api::{MatrixBot, MessageType};
 use matrix_bot_api::handlers::{Message, MessageHandler, extract_command, HandleResult};
-use self::chrono::{DateTime, NaiveDateTime, Utc, Local};
-
+use chrono::{DateTime, NaiveDateTime, Utc, Local};
 
 pub fn help_str_short() -> String {
    "!wetter X - Zeigt Wetterbericht für Stadt X an\n".to_string()

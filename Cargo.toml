@@ -6,6 +6,7 @@ description = """Some functions for writing a bot for the Matrix messaging proto
 license = "MIT"
 keywords = [ "matrix", "bot", "fractal" ]
 repository = "https://github.com/zwieberl/matrix_bot_functions"
+edition = "2018"
 
 [dependencies]
 matrix_bot_api = { path = "../matrix_bot_api", version = "0.4"}

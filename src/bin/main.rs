@@ -1,11 +1,7 @@
-
-extern crate config;
-extern crate matrix_bot_api;
-extern crate matrix_bot_functions;
-
 use matrix_bot_api::{MatrixBot, MessageType, Message};
 use matrix_bot_api::handlers::{StatelessHandler, HandleResult};
 use matrix_bot_functions::{dice, leave, stash, weather};
+use config;
 
 fn general_help_func (bot: &MatrixBot, message: &Message, cmd: &str) -> HandleResult {
     let cmd_split : Vec<&str> = cmd.split_whitespace().collect();
