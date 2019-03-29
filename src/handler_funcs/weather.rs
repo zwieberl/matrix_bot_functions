@@ -5,15 +5,20 @@ use std::collections::HashMap;
 
 use matrix_bot_api::{MatrixBot, MessageType};
 use matrix_bot_api::handlers::{Message, MessageHandler, extract_command, HandleResult};
+
+use crate::languages::*;
+use crate::tr;
+
 use chrono::{DateTime, NaiveDateTime, Utc, Local};
 
 pub fn help_str_short() -> String {
-   "!wetter X - Zeigt Wetterbericht für Stadt X an\n".to_string()
+   tr!("!weather X - Show weather forcast for city X").to_string() + "\n"
 }
 
 pub fn help_str() -> String {
-    let mut message = "Wetterbericht:\n".to_string();
-    message += "!wetter STADT\n";
+    let mut message = tr!("Forecast").to_string() + ":\n";
+    message += tr!("!weather CITY");
+    message += "\n";
     message
 }
 
@@ -64,7 +69,7 @@ impl WeatherHandler {
             Ok(resp) => resp,
             Err(_) => { return Ok(format!("{:?}", data.status())); }
         };
-        message += &format!("Wetter für {} ({}):\n", resp.city.name, resp.city.country);
+        message += &format!("{} {} ({}):\n", tr!("Weather for"), resp.city.name, resp.city.country);
         for item in resp.list {
             let utc = DateTime::<Utc>::from_utc(NaiveDateTime::from_timestamp(item.dt, 0), Utc);
             let date = utc.with_timezone(&Local);
@@ -80,7 +85,8 @@ impl WeatherHandler {
     }
 
     pub fn weather(&self, location: &str) -> String {
-    	match self.get_data(&format!("http://api.openweathermap.org/data/2.5/forecast?q={}&units=metric&cnt=12&lang=de&appid={}", location, self.apikey)) {
+        let lang = SELECTED_LANG.get().expect("No language set!").to_lowercase();
+    	match self.get_data(&format!("http://api.openweathermap.org/data/2.5/forecast?q={}&units=metric&cnt=12&lang={}&appid={}", location, lang, self.apikey)) {
             Ok(msg) => msg,
             Err(msg) => format!("{:?}", msg),
         }
@@ -105,8 +111,8 @@ impl MessageHandler for WeatherHandler {
         // Your handler could have a HashMap with the command as the key
         // and a specific function for it (like StatelessHandler does it),
         // or you can use a simple match-statement, to act on the given command:
-        let answer = match command {
-          "wetter" | "Wetter" => self.weather(&message.body[end_of_prefix..].trim()),
+        let answer = match command.to_lowercase() {
+          ref x if x == tr!("weather") => self.weather(&message.body[end_of_prefix..].trim()),
           _ => { return HandleResult::ContinueHandling; } /* Not a known command */
         };
 

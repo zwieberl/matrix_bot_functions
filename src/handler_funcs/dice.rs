@@ -4,17 +4,26 @@ use matrix_bot_api::{Message, MatrixBot, MessageType};
 use matrix_bot_api::handlers::{HandleResult, StatelessHandler};
 use matrix_bot_api::handlers::HandleResult::{ContinueHandling, StopHandling};
 
+use crate::languages::*;
+use crate::tr;
+
 pub fn help_str_short() -> String {
-   "!rolle X [X ..] - Rolle einen (oder mehrere) Würfel mit X Augen\n".to_string()
+   tr!("!roll X [X ..] - Roll one (or more) dice with X sides").to_string() + "\n"
 }
 
 pub fn help_str() -> String {
-    let mut message = "Würfle Würfel:\n".to_string();
-    message += "!rolle X [X ..]\n";
-    message += "mit\n";
-    message += "X = irgend eine Zahl. Dies entspricht der Augenzahl des Würfels.\n";
-    message += "Wenn mehrere Zahlen angegeben werden, werden mehrere Würfel gewürfelt.\n";
-    message += "\nBeispiel: !rolle 6 6 => Rollt 2 Würfel mit je 6 Seiten.\n";
+    let mut message = tr!("Roll dice:").to_string() + "\n";
+    message += tr!("!roll X [X ..]");
+    message += "\n";
+    message += tr!("with");
+    message += "\n";
+    message += tr!("X = some number. These are the number of sides of the die.");
+    message += "\n";
+    message += tr!("If more than one number is given, multiple dice are rolled.");
+    message += "\n";
+    message += "\n";
+    message += tr!("Example: !roll 6 6 => Rolling 2 dice with both having 6 sides");
+    message += "\n";
     message
 }
 
@@ -30,7 +39,7 @@ pub fn dice_func (bot: &MatrixBot, message: &Message, cmd: &str) -> HandleResult
     for dice in cmd_split {
         let sides = match dice.parse::<u32>() {
             Ok(x) => x,
-            Err(_) => { bot.send_message(&format!("{} ist leider keine Zahl.", dice), &message.room, MessageType::RoomNotice); return StopHandling; }
+            Err(_) => { bot.send_message(&format!("{} {}", dice, tr!("is not a number.")), &message.room, MessageType::RoomNotice); return StopHandling; }
         };
         results.push((rand::random::<u32>() % sides) + 1);
     }
@@ -58,7 +67,7 @@ pub fn register_handler(bot: &mut MatrixBot, prefix: &Option<&str>) {
         None => {/* Nothing */},
     }
 
-    handler.register_handle("hilfe", dice_help);
-    handler.register_handle("rolle", dice_func);
+    handler.register_handle(tr!("help"), dice_help);
+    handler.register_handle(tr!("roll"), dice_func);
     bot.add_handler(handler);
 }

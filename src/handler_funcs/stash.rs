@@ -1,20 +1,31 @@
 use matrix_bot_api::{MatrixBot, MessageType};
 use matrix_bot_api::handlers::{Message, MessageHandler, extract_command, HandleResult};
 
+use crate::languages::*;
+use crate::tr;
+
 pub fn help_str_short() -> String {
-   "!{stash|del|show} [X ..] - Speichere einen (oder mehrere) Nachrichten speichern/anzeigen\n".to_string()
+   tr!("!{stash|del|show} [X ..] - Stash or show one or more messages").to_string() + "\n"
 }
 
 pub fn help_str() -> String {
-    let mut message = "Speichere Nachrichten:\n".to_string();
-    message += "!stash [Text] - speichert Text.\n";
-    message += "!show [X] - Zeigt die volle Nachricht passend zur gegebenen Nummer X.\n";
-    message += "    Ohne X: Zeigt alle gespeicherten Texte in Kurzform mit Nummer an.\n";
-    message += "!del X - Löscht die Nachricht zur gegebenen Nummer X.\n";
-    message += "\nBeispiel:\n!stash Kuchenrezept: http://mein.kochbuch.de/erdbeerkuchen\n";
-    message += "!show => [0] Kuchenrezept: ...\n";
-    message += "!show 0 => [0] Kuchenrezept: http://mein.kochbuch.de/erdbeerkuchen\n";
-    message += "!del 0 => Löscht Kuchenrezept\n";
+    let mut message = tr!("Stash message").to_string() + ":\n";
+    message += tr!("!stash [text] - Stashes text");
+    message += "\n";
+    message += tr!("!show [X] - Shows the full message at index X");
+    message += "\n";
+    message += tr!("    Without X: Show all stashed messages in short with index.");
+    message += "\n";
+    message += tr!("!del X - Delete message at index X.");
+    message += "\n";
+    message += tr!("\nExample:\n!stash cake recipe: http://my.cookbook.com/applecake");
+    message += "\n";
+    message += tr!("!show => [0] cake recipe: ...");
+    message += "\n";
+    message += tr!("!show 0 => [0] cake recipe: http://my.cookbook.com/applecake");
+    message += "\n";
+    message += tr!("!del 0 => Deletes cake recipe");
+    message += "\n";
     message
 }
 
@@ -40,7 +51,7 @@ impl StashHandler {
     fn list(&mut self) -> String {
     	let mut message = String::new();
     	if self.stashes.len() == 0 {
-			message += &format!("Stash ist leer.");
+			message += tr!("Stash is empty.");
     	} else {
 	    	for (idx, stash) in &mut self.stashes.iter().enumerate() {
 	    	    message += &format!("[{}] - {:.25}\n", idx, &stash);
@@ -52,18 +63,18 @@ impl StashHandler {
     pub fn del(&mut self, msg: &str)  -> String {
     	let idx: usize = match msg.parse() {
     	    Ok(x) => x,
-    	    Err(_) => { return format!("\"{}\" ist keine Zahl.", msg); },
+    	    Err(_) => { return format!("\"{}\" {}.", msg, tr!("is not a number.")); },
     	};
 
     	let mut message = String::new();
     	let length = self.stashes.len();
     	if length == 0 {
-    		message += &format!("Stash bereits leer.");
+    		message += tr!("Stash is empty.");
     	} else if idx < length {
     		self.stashes.remove(idx);
-    		message += &format!("Index {} entfernt.", idx);
+    		message += &format!("{} {}", tr!("Deleted index"), idx);
     	} else {
-    		message += &format!("Index {} falsch. Nur zwischen 0 und {} möglich.", idx, length - 1);
+    		message += tr!("Index out of range!");
     	}
 
     	message
@@ -76,17 +87,17 @@ impl StashHandler {
 
     	let idx: usize = match msg.parse() {
     	    Ok(x) => x,
-    	    Err(_) => return format!("{} ist keine Zahl.", msg),
+    	    Err(_) => return format!("{} {}", msg, tr!("is not a number.")),
     	};
 
     	let mut message = String::new();
     	let length = self.stashes.len();
     	if length == 0 {
-    		message += &format!("Stash ist leer.");
+    		message += tr!("Stash is empty.");
     	} else if idx < length {
     		message += &self.stashes[idx];
     	} else {
-    		message += &format!("Index {} falsch. Nur zwischen 0 und {} möglich.", idx, length - 1);
+    		message += tr!("Index out of range!");
     	}
 
     	message
@@ -95,7 +106,7 @@ impl StashHandler {
     pub fn stash(&mut self, msg: &str) -> String {
     	self.stashes.push(msg.to_string());
     	let length = self.stashes.len();
-    	format!("Text an Index {} hinzugefügt.", length - 1)
+    	format!("{} {}", tr!("Added text at index"), length - 1)
     }
 }
 
@@ -118,10 +129,10 @@ impl MessageHandler for StashHandler {
         // and a specific function for it (like StatelessHandler does it),
         // or you can use a simple match-statement, to act on the given command:
         let answer = match command {
-          "list"  => self.list(),
-          "stash" => self.stash(&message.body[end_of_prefix..].trim()),
-          "show"  => self.show(&message.body[end_of_prefix..].trim()),
-          "del"   => self.del(&message.body[end_of_prefix..].trim()),
+          x if x == tr!("list")  => self.list(),
+          x if x == tr!("stash") => self.stash(&message.body[end_of_prefix..].trim()),
+          x if x == tr!("show")  => self.show(&message.body[end_of_prefix..].trim()),
+          x if x == tr!("del")   => self.del(&message.body[end_of_prefix..].trim()),
           _ => { return HandleResult::ContinueHandling; } /* Not a known command */
         };
 

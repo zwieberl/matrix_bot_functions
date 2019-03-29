@@ -3,6 +3,9 @@ use matrix_bot_api::handlers::{StatelessHandler, HandleResult};
 use matrix_bot_functions::{dice, leave, stash, weather};
 use config;
 
+use matrix_bot_functions::languages::*;
+use matrix_bot_functions::tr;
+
 fn general_help_func (bot: &MatrixBot, message: &Message, cmd: &str) -> HandleResult {
     let cmd_split : Vec<&str> = cmd.split_whitespace().collect();
     match cmd_split.len() {
@@ -12,23 +15,26 @@ fn general_help_func (bot: &MatrixBot, message: &Message, cmd: &str) -> HandleRe
       1 => {
                 // return HandleResult::ContinueHandling;
                 match cmd_split[0] {
-                   "rolle" => { bot.send_message(&dice::help_str(), &message.room, MessageType::RoomNotice) },
-                   "stash" => { bot.send_message(&stash::help_str(), &message.room, MessageType::RoomNotice) },
-                   "wetter" => { bot.send_message(&weather::help_str(), &message.room, MessageType::RoomNotice) },
-                   _ => bot.send_message("Tut mir leid, diesen Befehl gibt es nicht.", &message.room, MessageType::RoomNotice),
+                   k if k == tr!("roll") => { bot.send_message(&dice::help_str(), &message.room, MessageType::RoomNotice) },
+                   k if k == tr!("stash") => { bot.send_message(&stash::help_str(), &message.room, MessageType::RoomNotice) },
+                   k if k == tr!("weather") => { bot.send_message(&weather::help_str(), &message.room, MessageType::RoomNotice) },
+                   _ => bot.send_message(tr!("Sorry, unknown command"), &message.room, MessageType::RoomNotice),
                 }
            },
       _ => {
-               bot.send_message("Tut mir leid, das geht nicht. Nutze \"!hilfe\" oder \"!hilfe BEFEHL\" für mehr Informationen.", &message.room, MessageType::RoomNotice);
+               bot.send_message(tr!("Sorry, that is not possible. Please use \"!help\" or \"!help COMMAND\" for more information."), &message.room, MessageType::RoomNotice);
            }
     };
     HandleResult::StopHandling
 }
 
 fn general_help_str() -> String {
-    let mut message = "Hallo, ich bin ein freundlicher Automat und biete diese Optionen:\n".to_string();
-    message += "!hilfe          - Schreibe diese Hilfe\n";
-    message += "!hilfe BEFEHL   - Gib zusätzliche Hilfe über einen der unten stehenden Befehle\n";
+    let mut message = tr!("Hi, I'm a friendly robot and provide these options:").to_string();
+    message += "\n";
+    message += tr!("!help         - Print this help");
+    message += "\n";
+    message += tr!("!help COMMAND - Print add. help for one of the commands below");
+    message += "\n";
     message += &dice::help_str_short();
     message += &stash::help_str_short();
     message += &weather::help_str_short();
@@ -45,6 +51,7 @@ fn main() {
     let password  = settings.get_str("password").unwrap();
     let homeserver_url = settings.get_str("homeserver_url").unwrap();
     let openweatherapi = settings.get_str("openweatherapi").unwrap();
+    SELECTED_LANG.set(settings.get_str("language").unwrap()).unwrap();
     // =========================================================
 
     // Defining Prefix - default: "!"
@@ -56,7 +63,7 @@ fn main() {
         Some(x) => handler.set_cmd_prefix(x),
         None => {/* Nothing */},
     }
-    handler.register_handle("hilfe",    general_help_func);
+    handler.register_handle(tr!("help"),    general_help_func);
 
     // Creating the bot
     let mut bot = MatrixBot::new(handler);
