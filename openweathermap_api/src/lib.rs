@@ -1,7 +1,7 @@
-#[macro_use]
-extern crate serde_derive;
 extern crate serde;
 extern crate serde_json;
+
+use serde::Deserialize;
 
 #[derive(Deserialize, Debug)]
 pub struct OWMMainItem {
