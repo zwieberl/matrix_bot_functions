@@ -1,6 +1,6 @@
 use rand;
 
-use matrix_bot_api::{Message, MatrixBot, MessageType};
+use matrix_bot_api::{Message, ActiveBot, MatrixBot, MessageType};
 use matrix_bot_api::handlers::{HandleResult, StatelessHandler};
 use matrix_bot_api::handlers::HandleResult::{ContinueHandling, StopHandling};
 
@@ -27,12 +27,12 @@ pub fn help_str() -> String {
     message
 }
 
-fn dice_help (bot: &MatrixBot, message: &Message, _cmd: &str) -> HandleResult {
+fn dice_help (bot: &ActiveBot, message: &Message, _cmd: &str) -> HandleResult {
     bot.send_message(&help_str(), &message.room, MessageType::RoomNotice);
     ContinueHandling
 }
 
-pub fn dice_func (bot: &MatrixBot, message: &Message, cmd: &str) -> HandleResult {
+pub fn dice_func (bot: &ActiveBot, message: &Message, cmd: &str) -> HandleResult {
     let cmd_split = cmd.split_whitespace();
 
     let mut results: Vec<u32> = vec![];

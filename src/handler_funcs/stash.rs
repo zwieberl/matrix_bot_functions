@@ -1,4 +1,4 @@
-use matrix_bot_api::{MatrixBot, MessageType};
+use matrix_bot_api::{ActiveBot, MatrixBot, MessageType};
 use matrix_bot_api::handlers::{Message, MessageHandler, extract_command, HandleResult};
 use std::collections::HashMap;
 use crate::languages::*;
@@ -132,7 +132,7 @@ impl StashHandler {
 // This trait only has one function: handle_message() and will be called on each
 // new (text-)message in the room the bot is in.
 impl MessageHandler for StashHandler {
-    fn handle_message(&mut self, bot: &MatrixBot, message: &Message) -> HandleResult {
+    fn handle_message(&mut self, bot: &ActiveBot, message: &Message) -> HandleResult {
         // Get who sent it
         let user = &message.sender;
         // extract_command() will split the message by whitespace and remove the prefix (here "!")

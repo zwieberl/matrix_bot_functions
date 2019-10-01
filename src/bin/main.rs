@@ -1,4 +1,4 @@
-use matrix_bot_api::{MatrixBot, MessageType, Message};
+use matrix_bot_api::{ActiveBot, MatrixBot, MessageType, Message};
 use matrix_bot_api::handlers::{StatelessHandler, HandleResult};
 use matrix_bot_functions::{dice, leave, stash, weather};
 use config;
@@ -6,7 +6,7 @@ use config;
 use matrix_bot_functions::languages::*;
 use matrix_bot_functions::tr;
 
-fn general_help_func (bot: &MatrixBot, message: &Message, cmd: &str) -> HandleResult {
+fn general_help_func (bot: &ActiveBot, message: &Message, cmd: &str) -> HandleResult {
     let cmd_split : Vec<&str> = cmd.split_whitespace().collect();
     match cmd_split.len() {
       0 => {

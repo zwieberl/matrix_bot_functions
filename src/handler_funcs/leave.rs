@@ -1,14 +1,14 @@
-use matrix_bot_api::{MatrixBot, Message, MessageType};
+use matrix_bot_api::{ActiveBot, MatrixBot, Message, MessageType};
 use matrix_bot_api::handlers::{HandleResult, StatelessHandler};
 use matrix_bot_api::handlers::HandleResult::{ContinueHandling, StopHandling};
 
 
-pub fn shutdown (bot: &MatrixBot, _message: &Message, _cmd: &str) -> HandleResult {
+pub fn shutdown (bot: &ActiveBot, _message: &Message, _cmd: &str) -> HandleResult {
 	bot.shutdown();
 	ContinueHandling
 }
 
-pub fn leave (bot: &MatrixBot, message: &Message, _cmd: &str) -> HandleResult {
+pub fn leave (bot: &ActiveBot, message: &Message, _cmd: &str) -> HandleResult {
 	bot.send_message("Bye!", &message.room, MessageType::RoomNotice);
 	bot.leave_room(&message.room);
 	StopHandling
